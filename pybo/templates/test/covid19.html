@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block content %} 
+<form id="info" action="/test/get_covid19_data" method="post">
+    <input type="hidden" name="labels" id="labels" value="{{labels}}">
+    <input type="hidden" name="data" id="data" value="{{data}}">
+    <input type="date" name="date" id="date">
+    <button id="ajax_btn" type="button">결과 출력</button>
+</form>
+
+<h1 id="no_data"></h1>
+<canvas id="myChart_age"></canvas>
+<hr>
+<canvas id="myChart_gender"></canvas>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+
+        $("#ajax_btn").click(function(){
+            let form = document.getElementById("info");
+            let formData = new FormData(form);
+
+            $.ajax({
+            url: "/test/get_covid19_data",
+            type: "POST",
+            processData: false,
+            contentType: false,
+            data: formData,
+            dataType: "JSON",
+            success: function(data){
+                TF = data["TF"]
+                let age_col = data["age_col"]
+                let gender_col = data["gender_col"]
+                let list_age = data["list_age"]
+                let list_gender = data["list_gender"]
+
+                if (TF){
+                    $("#no_data").text("")
+
+                    TF = false;
+
+                    let labels_age = [];
+                    let data_age = [];
+
+                    let labels_gender = [];
+                    let data_gender = [];
+
+                    let chartStatus_age = Chart.getChart('myChart_age');
+                    if (chartStatus_age !== undefined) {
+                        chartStatus_age.destroy();
+                    }
+
+                    let chartStatus_gender = Chart.getChart('myChart_gender');
+                    if (chartStatus_gender !== undefined) {
+                        chartStatus_gender.destroy();
+                    }
+
+                    var i;
+
+                    for (i = 0; i < list_age.length; i++) {
+                        labels_age.push(list_age[i][1] + " " + age_col[2])
+                        labels_age.push(list_age[i][1] + " " + age_col[3])
+                    }
+
+                    for (i = 0; i < list_age.length; i++) {
+                        data_age.push(list_age[i][2])
+                        data_age.push(list_age[i][3])
+                    }
+
+                    for (i = 0; i < list_gender.length; i++) {
+                        labels_gender.push(list_gender[i][1] + " " + gender_col[2])
+                        labels_gender.push(list_gender[i][1] + " " + gender_col[3])
+                    }
+
+                    for (i = 0; i < list_gender.length; i++) {
+                        data_gender.push(list_gender[i][2])
+                        data_gender.push(list_gender[i][3])
+                    }
+
+                    let ctx_age = document.getElementById('myChart_age');
+                    let myChart_age = new Chart(ctx_age, {
+                        type: 'bar',
+                        data: {
+                            labels: labels_age,
+                            datasets: [{
+                                label: '명',
+                                data: data_age,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: '나잇대별 코로나 데이터'
+                            },
+                            }
+                        }
+                    });
+
+                    let ctx_gender = document.getElementById('myChart_gender');
+                    let myChart_gender = new Chart(ctx_gender, {
+                        type: 'bar',
+                        data: {
+                            labels: labels_gender,
+                            datasets: [{
+                                label: '명',
+                                data: data_gender,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: '성별 코로나 데이터'
+                            },
+                            }
+                        }
+                    });
+                } else {
+                    let labels_age = [];
+                    let data_age = [];
+
+                    let labels_gender = [];
+                    let data_gender = [];
+
+                    let chartStatus_age = Chart.getChart('myChart_age');
+                    if (chartStatus_age !== undefined) {
+                        chartStatus_age.destroy();
+                    }
+
+                    let chartStatus_gender = Chart.getChart('myChart_gender');
+                    if (chartStatus_gender !== undefined) {
+                        chartStatus_gender.destroy();
+                    }
+                    $("#no_data").text("데이터 없음")
+                }
+
+                
+            }
+            });
+        });
+
+
+
+
+     });
+</script> 
+{% endblock %}

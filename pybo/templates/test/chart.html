@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %} 
+<input type="date" name="" id="">
+<canvas id="myChart"></canvas>
+<input type="hidden" name="labels" id="labels" value="{{labels}}">
+<input type="hidden" name="data" id="data" value="{{data}}">
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        let labels = eval($("#labels").val());
+        let data = eval($("#data").val());
+
+        let ctx = document.getElementById('myChart');
+        let myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '요소',
+                    data: data,
+                }]
+            },
+        });
+
+     });
+</script> 
+{% endblock %}
