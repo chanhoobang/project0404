@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from . import config
+
 from sqlalchemy import MetaData
 
 naming_convention = {
@@ -19,7 +19,7 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(config)
+    app.config.from_envvar("APP_CONFIG_FILE")
 
     db.init_app(app)
 
