@@ -4,6 +4,7 @@ bp = Blueprint("main", __name__, url_prefix="/")
 
 @bp.route("/")
 def main():
+    3/0
     return "boston!"
 
 
