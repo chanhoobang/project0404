@@ -4,7 +4,7 @@ bp = Blueprint("main", __name__, url_prefix="/")
 
 @bp.route("/")
 def main():
-    3/0
+    current_app.logger.info("info 레벨로 출력")
     return "boston!"
 
 
